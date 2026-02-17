@@ -16,19 +16,16 @@ mongoose.connect(process.env.MONGO_URI).then(function () {
 })["catch"](function (err) {
   return console.error("MongoDB connection error:", err);
 });
-
-// Routes 
-var formRoute = require("./src/routes/formRoute");
 var authRoute = require("./src/routes/authRoute");
-var expansiveRoute = require("./src/routes/expansiveRoute");
-
-// const billRoute = require("./src/controllers/billCountroller");
-
-app.use("/api/form", formRoute);
-// app.use("/api/form", billRoute);
-
-app.use("/api/form", authRoute);
-app.use("/api/form", expansiveRoute);
+var jobRoutes = require('./src/routes/JobRoute');
+var hrRoutes = require('./src/routes/hrRoute');
+var applicationRoutes = require('./src/routes/applicationRoute');
+var landingJobRoutes = require('./src/routes/landingJobRoute');
+app.use('/api/landing-jobs', landingJobRoutes);
+app.use('/api/application', applicationRoutes);
+app.use('/api/hr', hrRoutes);
+app.use("/api/auth", authRoute);
+app.use('/api/jobs', jobRoutes);
 
 // Server
 var PORT = process.env.PORT || 5000;

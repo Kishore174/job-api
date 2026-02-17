@@ -1,9 +1,13 @@
 "use strict";
 
-// src/models/userModel.js
 var mongoose = require('mongoose');
 var userSchema = new mongoose.Schema({
   username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  email: {
     type: String,
     required: true,
     unique: true
@@ -14,8 +18,17 @@ var userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    "enum": ['admin', 'user'],
-    "default": 'user'
-  } // Define roles
+    "enum": ['admin', 'student'],
+    "default": 'student'
+  },
+  dailyApplyCount: {
+    type: Number,
+    "default": 0
+  },
+  lastApplyDate: {
+    type: Date
+  }
+}, {
+  timestamps: true
 });
-module.exports = mongoose.model('User ', userSchema);
+module.exports = mongoose.model('User', userSchema);

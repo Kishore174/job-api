@@ -9,58 +9,72 @@ var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 exports.register = /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(req, res) {
-    var _req$body, username, password, role, existingUser, hashedPassword, newUser, _t;
+    var _req$body, username, email, password, role, existingUser, hashedPassword, newUser, _t;
     return _regenerator["default"].wrap(function (_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
-          _req$body = req.body, username = _req$body.username, password = _req$body.password, role = _req$body.role;
-          _context.next = 1;
-          return User.findOne({
-            username: username
-          });
-        case 1:
-          existingUser = _context.sent;
-          if (!existingUser) {
-            _context.next = 2;
+          _req$body = req.body, username = _req$body.username, email = _req$body.email, password = _req$body.password, role = _req$body.role;
+          if (!(!username || !email || !password)) {
+            _context.next = 1;
             break;
           }
           return _context.abrupt("return", res.status(400).json({
             success: false,
-            message: 'User  already exists'
+            message: 'All fields required'
           }));
+        case 1:
+          _context.next = 2;
+          return User.findOne({
+            $or: [{
+              username: username
+            }, {
+              email: email
+            }]
+          });
         case 2:
-          _context.next = 3;
-          return bcrypt.hash(password, 10);
+          existingUser = _context.sent;
+          if (!existingUser) {
+            _context.next = 3;
+            break;
+          }
+          return _context.abrupt("return", res.status(400).json({
+            success: false,
+            message: 'User already exists'
+          }));
         case 3:
+          _context.next = 4;
+          return bcrypt.hash(password, 10);
+        case 4:
           hashedPassword = _context.sent;
           newUser = new User({
             username: username,
+            email: email,
             password: hashedPassword,
             role: role
           });
-          _context.next = 4;
+          _context.next = 5;
           return newUser.save();
-        case 4:
+        case 5:
           res.status(201).json({
             success: true,
-            message: 'User  registered successfully'
+            message: 'User registered successfully'
           });
-          _context.next = 6;
+          _context.next = 7;
           break;
-        case 5:
-          _context.prev = 5;
+        case 6:
+          _context.prev = 6;
           _t = _context["catch"](0);
-          console.error('Registration error:', _t.message);
+          console.error(_t);
           res.status(500).json({
             success: false,
             message: 'Registration failed'
           });
-        case 6:
+        case 7:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 5]]);
+    }, _callee, null, [[0, 6]]);
   }));
   return function (_x, _x2) {
     return _ref.apply(this, arguments);
@@ -133,3 +147,8 @@ exports.login = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
+exports.getDashboardData = function (req, res) {
+  res.status(501).json({
+    message: 'Not Implemented'
+  });
+};

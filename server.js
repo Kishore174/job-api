@@ -21,6 +21,10 @@ const authRoute = require("./src/routes/authRoute");
  const hrRoutes = require('./src/routes/hrRoute');
 
  const applicationRoutes = require('./src/routes/applicationRoute');
+ const landingJobRoutes = require('./src/routes/landingJobRoute');
+
+ app.use('/api/landing-jobs', landingJobRoutes);
+
 app.use('/api/application', applicationRoutes);
 
 app.use('/api/hr', hrRoutes);
