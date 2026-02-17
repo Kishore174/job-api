@@ -18,6 +18,8 @@ exports.createLandingJob = async (req, res) => {
     });
   }
 };
+
+// Public fetch for landing page
 exports.getLandingJobs = async (req, res) => {
   try {
     const jobs = await LandingJob.find({ isActive: true })
@@ -32,56 +34,5 @@ exports.getLandingJobs = async (req, res) => {
       success: false,
       message: "Failed to fetch landing jobs"
     });
-  }
-};
-
-  exports.getAllLandingJobs = async (req, res) => {
-  try {
-    const jobs = await LandingJob.find()
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      jobs
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch jobs"
-    });
-  }
-};
-
-// UPDATE JOB
-exports.updateLandingJob = async (req, res) => {
-  try {
-    const job = await LandingJob.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-
-    res.json({
-      success: true,
-      message: "Job updated",
-      job
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-
-// DELETE JOB
-exports.deleteLandingJob = async (req, res) => {
-  try {
-    await LandingJob.findByIdAndDelete(req.params.id);
-
-    res.json({
-      success: true,
-      message: "Job deleted"
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
   }
 };
