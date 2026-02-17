@@ -14,6 +14,8 @@ router.post('/', authMiddleware(['admin']), createLandingJob);
 
 // Public landing page jobs
 router.get('/', getLandingJobs);
-router.put('/:id', authMiddleware(['admin']), updateLandingJob);
-router["delete"]('/:id', authMiddleware(['admin']), deleteLandingJob);
+
+// router.put('/:id', authMiddleware(['admin']), updateLandingJob);
+// router.delete('/:id', authMiddleware(['admin']), deleteLandingJob);
+
 module.exports = router;

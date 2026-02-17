@@ -10,11 +10,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());  // Support base64 images
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI).then(() => console.log("MongoDB connected"))
-  .catch(err => console.error("MongoDB connection error:", err));
+const connectDB = require("./src/lib/mongodb");
 
- 
+connectDB()
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
+
 const authRoute = require("./src/routes/authRoute");
  
  const jobRoutes = require('./src/routes/JobRoute');

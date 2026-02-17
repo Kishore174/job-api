@@ -41,6 +41,8 @@ exports.createLandingJob = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
+
+// Public fetch for landing page
 exports.getLandingJobs = /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res) {
     var jobs, _t2;
@@ -77,115 +79,5 @@ exports.getLandingJobs = /*#__PURE__*/function () {
   }));
   return function (_x3, _x4) {
     return _ref2.apply(this, arguments);
-  };
-}();
-exports.getAllLandingJobs = /*#__PURE__*/function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res) {
-    var jobs, _t3;
-    return _regenerator["default"].wrap(function (_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
-        case 0:
-          _context3.prev = 0;
-          _context3.next = 1;
-          return LandingJob.find().sort({
-            createdAt: -1
-          });
-        case 1:
-          jobs = _context3.sent;
-          res.status(200).json({
-            success: true,
-            jobs: jobs
-          });
-          _context3.next = 3;
-          break;
-        case 2:
-          _context3.prev = 2;
-          _t3 = _context3["catch"](0);
-          res.status(500).json({
-            success: false,
-            message: "Failed to fetch jobs"
-          });
-        case 3:
-        case "end":
-          return _context3.stop();
-      }
-    }, _callee3, null, [[0, 2]]);
-  }));
-  return function (_x5, _x6) {
-    return _ref3.apply(this, arguments);
-  };
-}();
-
-// UPDATE JOB
-exports.updateLandingJob = /*#__PURE__*/function () {
-  var _ref4 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res) {
-    var job, _t4;
-    return _regenerator["default"].wrap(function (_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
-        case 0:
-          _context4.prev = 0;
-          _context4.next = 1;
-          return LandingJob.findByIdAndUpdate(req.params.id, req.body, {
-            "new": true
-          });
-        case 1:
-          job = _context4.sent;
-          res.json({
-            success: true,
-            message: "Job updated",
-            job: job
-          });
-          _context4.next = 3;
-          break;
-        case 2:
-          _context4.prev = 2;
-          _t4 = _context4["catch"](0);
-          res.status(500).json({
-            success: false,
-            message: _t4.message
-          });
-        case 3:
-        case "end":
-          return _context4.stop();
-      }
-    }, _callee4, null, [[0, 2]]);
-  }));
-  return function (_x7, _x8) {
-    return _ref4.apply(this, arguments);
-  };
-}();
-
-// DELETE JOB
-exports.deleteLandingJob = /*#__PURE__*/function () {
-  var _ref5 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res) {
-    var _t5;
-    return _regenerator["default"].wrap(function (_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
-        case 0:
-          _context5.prev = 0;
-          _context5.next = 1;
-          return LandingJob.findByIdAndDelete(req.params.id);
-        case 1:
-          res.json({
-            success: true,
-            message: "Job deleted"
-          });
-          _context5.next = 3;
-          break;
-        case 2:
-          _context5.prev = 2;
-          _t5 = _context5["catch"](0);
-          res.status(500).json({
-            success: false,
-            message: _t5.message
-          });
-        case 3:
-        case "end":
-          return _context5.stop();
-      }
-    }, _callee5, null, [[0, 2]]);
-  }));
-  return function (_x9, _x0) {
-    return _ref5.apply(this, arguments);
   };
 }();
