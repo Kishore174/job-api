@@ -24,6 +24,8 @@ const authRoute = require("./src/routes/authRoute");
 
  const applicationRoutes = require('./src/routes/applicationRoute');
  const landingJobRoutes = require('./src/routes/landingJobRoute');
+const studentRoutes = require('./src/routes/studentRoute');
+app.use('/api/student', studentRoutes);
 
  app.use('/api/landing-jobs', landingJobRoutes);
 

@@ -81,3 +81,97 @@ exports.getLandingJobs = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
+// Update Landing Job
+exports.updateLandingJob = /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res) {
+    var id, updatedJob, _t3;
+    return _regenerator["default"].wrap(function (_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.prev = 0;
+          id = req.params.id;
+          _context3.next = 1;
+          return LandingJob.findByIdAndUpdate(id, req.body, {
+            "new": true
+          });
+        case 1:
+          updatedJob = _context3.sent;
+          if (updatedJob) {
+            _context3.next = 2;
+            break;
+          }
+          return _context3.abrupt("return", res.status(404).json({
+            success: false,
+            message: "Job not found"
+          }));
+        case 2:
+          res.status(200).json({
+            success: true,
+            message: "Job updated successfully",
+            job: updatedJob
+          });
+          _context3.next = 4;
+          break;
+        case 3:
+          _context3.prev = 3;
+          _t3 = _context3["catch"](0);
+          res.status(500).json({
+            success: false,
+            message: "Update failed"
+          });
+        case 4:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[0, 3]]);
+  }));
+  return function (_x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+// Delete Landing Job
+exports.deleteLandingJob = /*#__PURE__*/function () {
+  var _ref4 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res) {
+    var id, deletedJob, _t4;
+    return _regenerator["default"].wrap(function (_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          id = req.params.id;
+          _context4.next = 1;
+          return LandingJob.findByIdAndDelete(id);
+        case 1:
+          deletedJob = _context4.sent;
+          if (deletedJob) {
+            _context4.next = 2;
+            break;
+          }
+          return _context4.abrupt("return", res.status(404).json({
+            success: false,
+            message: "Job not found"
+          }));
+        case 2:
+          res.status(200).json({
+            success: true,
+            message: "Job deleted successfully"
+          });
+          _context4.next = 4;
+          break;
+        case 3:
+          _context4.prev = 3;
+          _t4 = _context4["catch"](0);
+          res.status(500).json({
+            success: false,
+            message: "Delete failed"
+          });
+        case 4:
+        case "end":
+          return _context4.stop();
+      }
+    }, _callee4, null, [[0, 3]]);
+  }));
+  return function (_x7, _x8) {
+    return _ref4.apply(this, arguments);
+  };
+}();

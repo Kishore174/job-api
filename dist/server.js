@@ -21,6 +21,8 @@ var jobRoutes = require('./src/routes/JobRoute');
 var hrRoutes = require('./src/routes/hrRoute');
 var applicationRoutes = require('./src/routes/applicationRoute');
 var landingJobRoutes = require('./src/routes/landingJobRoute');
+var studentRoutes = require('./src/routes/studentRoute');
+app.use('/api/student', studentRoutes);
 app.use('/api/landing-jobs', landingJobRoutes);
 app.use('/api/application', applicationRoutes);
 app.use('/api/hr', hrRoutes);

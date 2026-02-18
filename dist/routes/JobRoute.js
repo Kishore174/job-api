@@ -6,14 +6,18 @@ var authMiddleware = require('../middileware/authMiddleware');
 var _require = require('../controllers/jobController'),
   createJob = _require.createJob,
   getJobs = _require.getJobs,
-  deleteJob = _require.deleteJob;
+  deleteJob = _require.deleteJob,
+  getPremiumJobs = _require.getPremiumJobs;
 
-// Admin create job
+// 🔹 Create Job (Admin)
 router.post('/', authMiddleware(['admin']), createJob);
 
-// Students view jobs
-router.get('/', authMiddleware(['admin', 'student']), getJobs);
+// 🔹 Get All Jobs (Admin)
+router.get('/', authMiddleware(['admin']), getJobs);
 
-// Admin delete job
+// 🔹 Get Premium Jobs (Student + Admin)
+router.get('/premium', authMiddleware(['admin', 'student']), getPremiumJobs);
+
+// 🔹 Delete Job (Admin)
 router["delete"]('/:id', authMiddleware(['admin']), deleteJob);
 module.exports = router;

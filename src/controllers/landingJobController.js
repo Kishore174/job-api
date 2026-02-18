@@ -36,3 +36,60 @@ exports.getLandingJobs = async (req, res) => {
     });
   }
 };
+ // Update Landing Job
+exports.updateLandingJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedJob = await LandingJob.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedJob) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job updated successfully",
+      job: updatedJob,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Update failed",
+    });
+  }
+};
+
+
+// Delete Landing Job
+exports.deleteLandingJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedJob = await LandingJob.findByIdAndDelete(id);
+
+    if (!deletedJob) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Delete failed",
+    });
+  }
+};

@@ -2,26 +2,18 @@
 
 var mongoose = require('mongoose');
 var jobSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
+  title: String,
+  description: String,
+  location: String,
+  experienceRequired: String,
+  isPremium: {
+    type: Boolean,
+    "default": false
   },
-  description: {
-    type: String,
-    required: true
-  },
-  location: {
-    type: String,
-    required: true
-  },
-  experienceRequired: {
-    type: String,
-    required: true
-  },
+  // 👈 ADD THIS
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User"
   }
 }, {
   timestamps: true
