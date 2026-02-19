@@ -7,10 +7,15 @@ var express = require('express');
 var router = express.Router();
 var authMiddleware = require('../middileware/authMiddleware');
 var _require = require('../controllers/applicationController'),
-  applyJob = _require.applyJob;
+  applyJob = _require.applyJob,
+  getMyApplications = _require.getMyApplications,
+  getAllApplications = _require.getAllApplications;
 var HrEmail = require('../module/hrEmail'); // ✅ ADD THIS LINE
 
-router.post('/apply', authMiddleware(['student']), applyJob);
+var upload = require("../middileware/uploadResume");
+router.post("/apply", authMiddleware(["student"]), upload.single("resume"), applyJob);
+router.get("/my", authMiddleware(["student"]), getMyApplications);
+router.get("/admin/applications", authMiddleware(["admin"]), getAllApplications);
 router.get("/hr/:jobId", authMiddleware(["student", "admin"]), /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(req, res) {
     var hrList, _t;

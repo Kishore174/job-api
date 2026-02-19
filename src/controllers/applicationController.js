@@ -5,126 +5,202 @@ const User = require('../module/user');
 const mongoose = require('mongoose');
 const transporter = require('../config/email');
 
+ 
 exports.applyJob = async (req, res) => {
   try {
     const { jobId, experience, coverLetter, selectedHr } = req.body;
     const studentId = req.user.id;
+    const resumeFile = req.file;
 
-    // 1️⃣ Validate Required Fields
+    // ================= VALIDATIONS =================
+
     if (!jobId || !experience || !coverLetter) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required"
+        message: "All fields are required",
       });
     }
 
-    // 2️⃣ Validate ObjectId
+    if (!resumeFile) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume file is required",
+      });
+    }
+
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Job ID"
+        message: "Invalid Job ID",
       });
     }
 
-    // 3️⃣ Check Job Exists
+    // ================= CHECK JOB =================
+
     const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({
         success: false,
-        message: "Job not found"
+        message: "Job not found",
       });
     }
 
-    // 4️⃣ Prevent Duplicate Application
+    // ================= PREVENT DUPLICATE =================
+
     const alreadyApplied = await Application.findOne({
       studentId,
-      jobId
+      jobId,
     });
 
     if (alreadyApplied) {
       return res.status(400).json({
         success: false,
-        message: "You have already applied for this job"
+        message: "You already applied for this job",
       });
     }
 
-    // 5️⃣ Get Student Info
-    const student = await User.findById(studentId).select("-password");
+    // ================= GET STUDENT =================
 
+    const student = await User.findById(studentId).select("-password");
     if (!student) {
       return res.status(404).json({
         success: false,
-        message: "Student not found"
+        message: "Student not found",
       });
     }
 
-    // 6️⃣ Save Application
-    const newApplication = new Application({
+    // ================= SAVE APPLICATION =================
+
+    const newApplication = await Application.create({
       studentId,
       jobId,
       experience,
-      coverLetter
+      coverLetter,
+      selectedHr,
+      resume: resumeFile.originalname, // store filename only
     });
 
-    await newApplication.save();
+    // ================= GET HR EMAILS =================
 
-    // 7️⃣ Fetch HR Emails
     const hrEmails = await HrEmail.find({ jobId });
 
-    if (!hrEmails.length) {
-      return res.status(200).json({
-        success: true,
-        message: "Application saved (No HR emails linked)"
-      });
+    // ================= SEND EMAIL =================
+
+    if (hrEmails.length > 0) {
+      await Promise.all(
+        hrEmails.map((hr) =>
+          transporter.sendMail({
+            from: `"Job Portal" <${process.env.EMAIL_USER}>`,
+            to: hr.email,
+            replyTo: student.email,
+            cc: student.email,
+            subject: `New Application: ${student.username} applied for ${job.title}`,
+
+            attachments: [
+              {
+                filename: resumeFile.originalname,
+                content: resumeFile.buffer,
+                contentType: resumeFile.mimetype,
+              },
+            ],
+
+            html: `
+              <div style="font-family:Arial;background:#f4f6f8;padding:30px;">
+                <div style="max-width:600px;margin:auto;background:#fff;border-radius:10px;overflow:hidden;">
+                  
+                  <div style="background:#2BB5CE;padding:20px;color:#fff;text-align:center;">
+                    <h2 style="margin:0;">New Job Application</h2>
+                  </div>
+
+                  <div style="padding:25px;">
+                    <h3>Job Details</h3>
+                    <p><strong>Job Title:</strong> ${job.title}</p>
+
+                    <hr style="margin:20px 0;"/>
+
+                    <h3>Candidate Information</h3>
+                    <p><strong>Name:</strong> ${student.username}</p>
+                    <p><strong>Email:</strong> ${student.email}</p>
+                    <p><strong>Experience:</strong> ${experience}</p>
+
+                    <div style="margin-top:20px;">
+                      <strong>Cover Letter:</strong>
+                      <div style="background:#f9f9f9;padding:15px;border-radius:6px;">
+                        ${coverLetter}
+                      </div>
+                    </div>
+
+                    <div style="margin-top:20px;background:#e8f6f9;padding:12px;border-radius:6px;">
+                      📎 Resume is attached with this email.
+                    </div>
+                  </div>
+
+                  <div style="background:#f4f6f8;padding:15px;text-align:center;font-size:12px;">
+                    This email was automatically generated by Job Portal.
+                  </div>
+
+                </div>
+              </div>
+            `,
+          })
+        )
+      );
     }
-
-// 8️⃣ Send Emails (Secure Professional Method)
-await Promise.all(
-  hrEmails.map(hr =>
-    transporter.sendMail({
-      from: `"${student.username}" <${process.env.EMAIL_USER}>`, // 👈 shows student name
-      to: hr.email,
-      replyTo: student.email,  // 👈 HR reply goes to student
-      cc: student.email,       // 👈 student gets copy
-      subject: `Application for ${job.title}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 15px;">
-          <h2 style="color:#2BB5CE;">New Job Application</h2>
-
-          <p><strong>Job Title:</strong> ${job.title}</p>
-          <p><strong>Candidate Name:</strong> ${student.username}</p>
-          <p><strong>Candidate Email:</strong> ${student.email}</p>
-          <p><strong>Experience:</strong> ${experience}</p>
-
-          <h4>Cover Letter:</h4>
-          <div style="background:#f4f4f4; padding:12px; border-radius:6px;">
-            ${coverLetter}
-          </div>
-
-          <hr style="margin-top:20px;" />
-
-          <p style="font-size:12px; color:gray;">
-            This email was sent via Job Portal System.
-          </p>
-        </div>
-      `
-    })
-  )
-);
-
 
     return res.status(201).json({
       success: true,
       message: "Application submitted successfully",
-      hrCount: hrEmails.length
     });
 
   } catch (error) {
     console.error("Apply Job Error:", error);
-
     return res.status(500).json({
       success: false,
-      message: "Something went wrong while applying"
+      message: "Something went wrong while applying",
+    });
+  }
+};
+
+
+exports.getMyApplications = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+
+    const applications = await Application.find({ studentId })
+      .select("jobId")
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      applications,
+    });
+  } catch (error) {
+    console.error("Get My Applications Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch applications",
+    });
+  }
+};
+
+// GET ALL APPLICATIONS (Admin)
+exports.getAllApplications = async (req, res) => {
+  try {
+    const applications = await Application.find()
+      .populate("studentId", "username email")
+      .populate("jobId", "title location")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      applications,
+    });
+
+  } catch (error) {
+    console.error("Admin Get Applications Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch applications",
     });
   }
 };
