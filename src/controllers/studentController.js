@@ -123,7 +123,6 @@ exports.updateStudent = async (req, res) => {
   }
 };
 
-// ✅ Delete Student
 exports.deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -134,9 +133,12 @@ exports.deleteStudent = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
+    // 🧹 Clean up all applications submitted by this student
+    await Application.deleteMany({ studentId: id });
+
     res.status(200).json({
       success: true,
-      message: "Student deleted successfully"
+      message: "Student and their applications deleted successfully"
     });
 
   } catch (error) {
