@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@babel/runtime": "^7.28.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",

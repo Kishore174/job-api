@@ -29,6 +29,8 @@ const hrRoutes = require("./src/routes/hrRoute");
 const applicationRoutes = require("./src/routes/applicationRoute");
 const landingJobRoutes = require("./src/routes/landingJobRoute");
 const studentRoutes = require("./src/routes/studentRoute");
+const profileRoutes = require("./src/routes/Profileroutes");
+const aiRoutes = require("./src/routes/Coverletterroute");
 
 app.use("/api/student", studentRoutes);
 app.use("/api/landing-jobs", landingJobRoutes);
@@ -36,7 +38,8 @@ app.use("/api/application", applicationRoutes);
 app.use("/api/hr", hrRoutes);
 app.use("/api/auth", authRoute);
 app.use("/api/jobs", jobRoutes);
-
+app.use("/api/profile", profileRoutes)
+app.use("/api/ai", aiRoutes);
 // ✅ Local development — only listen when not on Vercel
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
